@@ -1,0 +1,2 @@
+python_path="$(asdf which python)"
+layout python "${python_path}"
