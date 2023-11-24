@@ -1,13 +1,7 @@
-DIST_ARCHIVE = dist/sublime-tagref.sublime-package
-
-default: install
+default:
+	echo "no default target... yet."
 .PHONY: default
 
-install: bundle
-	cp "${DIST_ARCHIVE}" ~/.config/sublime-text/Installed\ Packages
+install:
+	ln --symbolic "$$PWD" ~/.config/sublime-text/Packages/sublime_tagref
 .PHONY: install
-
-bundle:
-	rm -f "${DIST_ARCHIVE}"
-	./bin/bundle.sh "${DIST_ARCHIVE}"
-.PHONY: bundle
