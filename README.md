@@ -17,12 +17,18 @@ assuming you want to work on this project using _your favorite text editor..._ ð
     Package Control
 4. create a `.sublime-project` file with this build system:
     ```json
-    "build_systems": [
-        {
-            "name": "Test sublime_tagref",
-            "target": "unit_testing",
-            "package": "sublime_tagref"
-        }
-    ]
+    {
+        "folders": [
+            /* ... */
+        ],
+        "build_systems": [
+            {
+                "name": "Test sublime-tagref",
+                "target": "unit_testing",
+                "package": "sublime-tagref"
+            }
+        ]
+    }
     ```
-    this will allow you to run tests in your current editor window.
+    this will allow you to run tests in your current editor window using the
+    `Build With: Test sublime-tagref` command in your command pallette.

@@ -1,6 +1,6 @@
 import unittest
 
-from sublime_tagref.commands.hello import hello
+from sublime_tagref.util.hello import hello
 
 
 class TestCase(unittest.TestCase):
