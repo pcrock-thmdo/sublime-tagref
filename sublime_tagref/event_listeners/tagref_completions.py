@@ -1,20 +1,20 @@
-import sublime
+from pathlib import Path
+
 import sublime_plugin
 
-# from ..tagref_completion_list import TagRefCompletionList
+from ..util.tagref_process import TagRefProcess
 
 
 # https://www.sublimetext.com/docs/completions.html#plugins
-class TagRefCompletions(sublime_plugin.EventListener):
+class TagRefCompletions(sublime_plugin.ViewEventListener):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        folders = [Path(f) for f in self.view.window().folders()]
+        self._process = TagRefProcess([f for f in folders if f.exists()])
+
     def on_query_completions(
         self,
-        view: sublime.View,
         prefix: str,
-        locations: list[sublime.Point]
-    ) -> sublime.CompletionList:
-        print("completions queried!")
-        return ["hi"]
-        # if prefix.lower() == "[ref:":
-        #     return TagRefCompletionList()
-        # else:
-        #     return []
+        locations: list,
+    ) -> list:
+        return self._process.get_valid_refs()

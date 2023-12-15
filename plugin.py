@@ -1,2 +1,10 @@
-from .sublime_tagref.commands import *  # noqa: F403
-from .sublime_tagref.event_listeners import *  # noqa: F403
+from .sublime_tagref.event_listeners.tagref_completions import TagRefCompletions
+
+
+__all__ = [
+    "TagRefCompletions",
+]
+
+
+# def plugin_loaded() -> None:
+#     print("mah plugin is loaded!")
