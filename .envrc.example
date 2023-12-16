@@ -1,2 +1,3 @@
-python_path="$(asdf which python)"
+use asdf
+python_path="$(command -v python)"
 layout python "${python_path}"
