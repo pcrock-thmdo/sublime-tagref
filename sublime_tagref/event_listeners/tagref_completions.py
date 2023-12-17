@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import List
 
 from sublime import CompletionFormat, CompletionItem, KIND_NAVIGATION, View
 import sublime_plugin
@@ -23,16 +24,16 @@ class TagRefCompletions(sublime_plugin.EventListener):
         view: View,
         prefix: str,
         locations: list,
-    ) -> list:
-        refs = get_process(view).get_valid_refs()
+    ) -> List[CompletionItem]:
+        tags = get_process(view).get_tags()
         completion_items = [
             CompletionItem(
-                r.strip("[]").partition(":")[2],
-                annotation=r,
-                completion=r,
+                t.tag_name,
+                annotation=t.full_ref_str,
+                completion=t.full_ref_str,
                 completion_format=CompletionFormat.TEXT,
                 kind=KIND_NAVIGATION,
-            ) for r in refs
+            ) for t in tags
         ]
         logger.debug(f"got completion items {completion_items}")
         return completion_items

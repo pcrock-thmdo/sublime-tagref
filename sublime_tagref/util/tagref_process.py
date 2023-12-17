@@ -1,7 +1,48 @@
+from dataclasses import dataclass
 import shutil
 import subprocess
+from typing import List
 
 from .logging import get_logger
+
+
+@dataclass
+class Tag:
+    """
+    the full tag string, ex. `[tag:foobar]`
+    """
+    full_tag_str: str
+
+    """
+    the tag name, ex. for `[tag:foobar]` it would be `foobar`
+    """
+    tag_name: str
+
+    """
+    the ref string you would use to reference the tag, ex. `[ref:foobar]`
+    """
+    full_ref_str: str
+
+    """
+    the file path where the tag appears
+    relative to the root directory where tagref was run
+    """
+    file_path: str
+
+    """
+    the line number in the file where the tag appears
+    """
+    line_number: int
+
+    def __init__(self, tagref_output: str):
+        parts = tagref_output.partition(" @ ")
+        self.full_tag_str = parts[0]
+        self.tag_name = parts[0].strip("[]").partition(":")[2]
+        self.full_ref_str = f"[ref:{self.tag_name}]"
+
+        location_parts = parts[2].rpartition(":")
+        self.file_path = location_parts[0]
+        self.line_number = int(location_parts[2])
 
 
 class TagRefProcess():
@@ -48,14 +89,8 @@ class TagRefProcess():
 
         self._processes = None
 
-    def get_tags(self) -> list:
+    def get_tags(self) -> List[Tag]:
         self._wait_for_results()
         return [
-            line.partition(" @ ")[0] for line in self._stdout
+            Tag(line) for line in self._stdout
         ]
-
-    def get_valid_refs(self) -> set:
-        return {
-            f"[ref{parts[1]}{parts[2]}]" for parts in
-            (tag.strip("[]").partition(":") for tag in self.get_tags())
-        }

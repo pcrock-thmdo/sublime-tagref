@@ -15,8 +15,5 @@ class TagRefProcessTest(unittest.TestCase):
 
     def test_get_tags__always__returns_tag_in_this_file(self) -> None:
         tags = TagRefProcess([THIS_DIR]).get_tags()
-        self.assertIn(TEST_TAG, tags)
-
-    def test_get_valid_refs__always__returns_ref_for_this_file(self) -> None:
-        refs = TagRefProcess([THIS_DIR]).get_valid_refs()
-        self.assertIn(TEST_REF, refs)
+        self.assertIn(TEST_TAG, [t.full_tag_str for t in tags])
+        self.assertIn(TEST_REF, [t.full_ref_str for t in tags])
