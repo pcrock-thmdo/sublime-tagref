@@ -4,7 +4,7 @@ import logging
 # thanks to https://github.com/SublimeText/PackageDev/blob/master/_logging.py
 
 
-DEFAULT_LOG_LEVEL = logging.DEBUG
+DEFAULT_LOG_LEVEL = logging.INFO
 IS_INITIALIZED = False
 
 

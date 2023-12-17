@@ -2,7 +2,12 @@
 
 [tagref](https://github.com/stepchowfun/tagref) integration for sublime text
 
-**wip learning project:** nothing implemented yet
+**wip learning project**
+
+### features
+
+* [x] tag autocomplete
+* [ ] go to tag
 
 ### getting started with development
 

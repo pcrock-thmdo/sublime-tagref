@@ -1,9 +1,18 @@
 from dataclasses import dataclass
+from functools import lru_cache
 import shutil
 import subprocess
 from typing import List
 
 from .logging import get_logger
+
+
+@lru_cache(maxsize=1)  # we would use `@cache`, but that was introduced in python 3.9 :'(
+def find_tagref() -> str:
+    executable_path = shutil.which("tagref")
+    if executable_path is None:
+        raise Exception("tagref executable not found.")
+    return executable_path
 
 
 @dataclass
@@ -45,16 +54,19 @@ class Tag:
         self.line_number = int(location_parts[2])
 
 
+def log_info(message: str):
+    get_logger(__name__).info(message)
+
+
+def log_warning(message: str):
+    get_logger(__name__).warning(message)
+
+
 class TagRefProcess():
     def __init__(self, folders: list):
-        self._logger = get_logger(__name__)
 
-        executable: str = shutil.which("tagref")
-        if executable is None:
-            raise Exception("tagref not found.")
-
-        command = [executable, "list-tags"]
-        self._logger.debug(f"running {command} for folders {folders}...")
+        command = [find_tagref(), "list-tags"]
+        log_info(f"running {command} for folders {folders}...")
         self._processes = [
             subprocess.Popen(
                 command,
@@ -64,28 +76,25 @@ class TagRefProcess():
             )
             for f in folders
         ]
-        self._stdout: list = None
-        self._stderr: list = None
+        self._stdout: List[str] = None
 
     def _wait_for_results(self):
-        if self._stdout is None:
-            self._stdout = []
-            self._stderr = []
-            for p in self._processes:
-                stdout_bytes, stderr_bytes = p.communicate(timeout=15)
-                self._stdout.extend(stdout_bytes.decode("UTF8").splitlines())
+        if self._stdout is not None:
+            return
 
-                stderr = stderr_bytes.decode("UTF8").splitlines()
-                self._stderr.extend(stderr)
-                if p.returncode != 0:
-                    raise Exception(f"tagref exited with code {p.returncode}: {stderr}")
+        self._stdout = []
+        stderr = []
+        for p in self._processes:
+            stdout_bytes, stderr_bytes = p.communicate(timeout=15)
+            self._stdout.extend(stdout_bytes.decode("UTF8").splitlines())
 
-            if len(self._stdout) > 0:
-                joined_stdout = "\n    ".join(self._stdout)
-                self._logger.debug(f"stdout:\n{joined_stdout}")
-            if len(self._stderr) > 0:
-                joined_stderr = "\n    ".join(self._stderr)
-                self._logger.debug(f"stderr:\n{joined_stderr}")
+            stderr.extend(stderr_bytes.decode("UTF8").splitlines())
+            if p.returncode != 0:
+                raise Exception(f"tagref exited with code {p.returncode}: {stderr}")
+
+        if len(stderr) > 0:
+            joined_stderr = "\n    ".join(stderr)
+            log_warning(f"stderr: {joined_stderr}")
 
         self._processes = None
 

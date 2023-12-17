@@ -17,7 +17,7 @@ def get_process(view: View) -> TagRefProcess:
 
 
 # https://www.sublimetext.com/docs/completions.html#plugins
-class TagRefCompletions(sublime_plugin.EventListener):
+class TagRefGlobalEventListener(sublime_plugin.EventListener):
 
     def on_query_completions(
         self,
@@ -28,12 +28,12 @@ class TagRefCompletions(sublime_plugin.EventListener):
         tags = get_process(view).get_tags()
         completion_items = [
             CompletionItem(
-                t.tag_name,
-                annotation=t.full_ref_str,
+                t.full_ref_str,
+                annotation="tagref",
                 completion=t.full_ref_str,
                 completion_format=CompletionFormat.TEXT,
                 kind=KIND_NAVIGATION,
             ) for t in tags
         ]
-        logger.debug(f"got completion items {completion_items}")
+        logger.info(f"got {len(completion_items)} completion items")
         return completion_items

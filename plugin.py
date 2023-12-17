@@ -5,11 +5,13 @@ from .sublime_tagref.util import logging
 logging.init(__package__)
 
 
-TagRefCompletions = dynamic_import(".event_listeners.tagref_completions").TagRefCompletions
+TagRefGlobalEventListener = dynamic_import(
+    ".event_listeners.global"
+).TagRefGlobalEventListener
 
 
 __all__ = [
-    "TagRefCompletions",
+    "TagRefGlobalEventListener",
 ]
 
 
