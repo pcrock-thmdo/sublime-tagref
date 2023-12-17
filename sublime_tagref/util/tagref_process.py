@@ -1,15 +1,22 @@
 import shutil
 import subprocess
 
+from .logging import get_logger
+
 
 class TagRefProcess():
     def __init__(self, folders: list):
+        self._logger = get_logger(__name__)
+
         executable: str = shutil.which("tagref")
         if executable is None:
             raise Exception("tagref not found.")
+
+        command = [executable, "list-tags"]
+        self._logger.debug(f"running {command} for folders {folders}...")
         self._processes = [
             subprocess.Popen(
-                [executable, "list-tags"],
+                command,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 cwd=f.__str__(),
@@ -32,6 +39,13 @@ class TagRefProcess():
                 if p.returncode != 0:
                     raise Exception(f"tagref exited with code {p.returncode}: {stderr}")
 
+            if len(self._stdout) > 0:
+                joined_stdout = "\n    ".join(self._stdout)
+                self._logger.debug(f"stdout:\n{joined_stdout}")
+            if len(self._stderr) > 0:
+                joined_stderr = "\n    ".join(self._stderr)
+                self._logger.debug(f"stderr:\n{joined_stderr}")
+
         self._processes = None
 
     def get_tags(self) -> list:
@@ -42,6 +56,6 @@ class TagRefProcess():
 
     def get_valid_refs(self) -> set:
         return {
-            f"[ref{parts[1]}{parts[2]}" for parts in
-            (tag.partition(":") for tag in self.get_tags())
+            f"[ref{parts[1]}{parts[2]}]" for parts in
+            (tag.strip("[]").partition(":") for tag in self.get_tags())
         }

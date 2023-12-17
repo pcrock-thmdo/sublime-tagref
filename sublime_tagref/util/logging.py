@@ -5,6 +5,7 @@ import logging
 
 
 DEFAULT_LOG_LEVEL = logging.DEBUG
+IS_INITIALIZED = False
 
 
 def init(package_name: str):
@@ -18,6 +19,11 @@ def init(package_name: str):
     package_logger.setLevel(DEFAULT_LOG_LEVEL)
     package_logger.propagate = False  # prevent root logger from catching this
 
+    global IS_INITIALIZED
+    IS_INITIALIZED = True
+
 
 def get_logger(name: str) -> logging.Logger:
+    if not IS_INITIALIZED:
+        raise Exception("logging hasn't been initialized yet.")
     return logging.getLogger(name)
