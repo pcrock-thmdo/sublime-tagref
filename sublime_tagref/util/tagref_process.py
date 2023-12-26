@@ -15,20 +15,23 @@ def find_tagref() -> str:
     return executable_path
 
 
+REF_PREFIX = "ref"
+
+
 @dataclass
 class Tag:
     """
-    the full tag string, ex. `[tag:foobar]`
+    the full tag string, ex. `[tag:tag-data-class]`
     """
     full_tag_str: str
 
     """
-    the tag name, ex. for `[tag:foobar]` it would be `foobar`
+    the tag name, ex. `tag-data-class`
     """
     tag_name: str
 
     """
-    the ref string you would use to reference the tag, ex. `[ref:foobar]`
+    the ref string you would use to reference the tag, ex. `[ref:tag-data-class]`
     """
     full_ref_str: str
 
@@ -47,7 +50,7 @@ class Tag:
         parts = tagref_output.partition(" @ ")
         self.full_tag_str = parts[0]
         self.tag_name = parts[0].strip("[]").partition(":")[2]
-        self.full_ref_str = f"[ref:{self.tag_name}]"
+        self.full_ref_str = f"[{REF_PREFIX}:{self.tag_name}]"
 
         location_parts = parts[2].rpartition(":")
         self.file_path = location_parts[0]
