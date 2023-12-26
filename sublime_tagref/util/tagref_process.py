@@ -21,17 +21,17 @@ REF_PREFIX = "ref"
 @dataclass
 class Tag:
     """
-    the full tag string, ex. `[tag:tag-data-class]`
+    the full tag string, ex. `[tag:tag-class]`
     """
     full_tag_str: str
 
     """
-    the tag name, ex. `tag-data-class`
+    the tag name, ex. `tag-class`
     """
     tag_name: str
 
     """
-    the ref string you would use to reference the tag, ex. `[ref:tag-data-class]`
+    the ref string you would use to reference the tag, ex. `[ref:tag-class]`
     """
     full_ref_str: str
 
